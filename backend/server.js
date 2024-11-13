@@ -31,6 +31,19 @@ app.use('/api/upload',uploadRoutes);
 const _dirname = path.resolve(); //Set _dirname to Current directory
 app.use('/uploads',express.static(path.join(_dirname,'/uploads')));
 
+if(process.env.NODE_ENV === 'production'){
+    //set static folder
+    app.use(express.static(path.join(_dirname, '/frontend/build')));
+
+    // any route that is not api will redirected to index.html
+    app.get('*', (req,res) =>
+        res.sendFile(path.resolve(_dirname, 'frontend', 'build', 'index.html'))
+    )
+}else {
+    app.get('/', (req,res) => {
+        res.send('API is running ....')
+    })
+}
 app.use(notfound);
 app.use(errorHandler);
 
